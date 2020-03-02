@@ -58,3 +58,17 @@ stdmetrics_z2 = function(z, dz = 1, th = 2)
   
   return(metrics)
 }
+
+
+# How to call it
+# metrics <- grid_metrics(ctg1, ~stdmetrics_z2(Z) , sqrt(250))
+# 
+# How to call it for catalog_apply
+# f <- function(cluster) {
+#   las <- readLAS(cluster)
+#   if (is.empty(las)) return(NULL)
+# 
+#   metrics <- cloud_metrics(las, ~stdmetrics_z2(Z))
+#   return(metrics)
+# }
+# plots_metrics <- catalog_apply(plots_ALS_clipped_ID, f)
