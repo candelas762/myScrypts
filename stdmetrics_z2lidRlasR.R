@@ -8,19 +8,6 @@ fast_countover <- function(x, t) {
 
 stdmetrics_z2 = function(z, dz = 1, th = 2)
 {
-  n = length(z)
-  zmax  = max(z)
-  zmean = mean(z)
-  
-  probs = seq(0.05, 0.95, 0.05)
-  zq 	  = as.list(stats::quantile(z, probs))
-  names(zq) = paste0("zq", probs*100)
-  
-  pzabovex = lapply(th, function(x) { fast_countover(z, x) / n * 100 })
-  names(pzabovex) = paste0("pzabove", th)
-  
-  pzabovemean = fast_countover(z, zmean) / n * 100
-  
   ###############
   
   ctv = function(z){quantile(z[z>=th],probs=0.95,type=2)}
@@ -43,18 +30,37 @@ stdmetrics_z2 = function(z, dz = 1, th = 2)
   names(d) = paste0("zpcum", 0:9)
   
   ###############
+  z <- z[z>=th]
+  
+  probs = seq(0.1,0.9,0.1)
+  zq 	  = as.list(stats::quantile(z, probs))
+  names(zq) = paste0(distpre, probs*100)
+  
+  skewness<-function(z){ 
+    m3<-sum((z-mean(z))^3)/length(z) 
+    s3<-sqrt(var(z))^3 
+    m3/s3 
+  } 
+  kurtosis<-function(z){ 
+    m4<-sum((z-mean(z))^4)/length(z) 
+    s4<-var(z)^2 
+    m4/s4 - 3 
+  } 
+  coefvar<-function(z){
+    sd(z)/mean(z)
+  }
   
   metrics = list(
-    zmax  = zmax,
-    zmean = zmean,
-    zsd   = stats::sd(z),
-    zskew = (sum((z - zmean)^3)/n)/(sum((z - zmean)^2)/n)^(3/2),
-    zkurt = n * sum((z - zmean)^4)/(sum((z - zmean)^2)^2),
-    zentropy  = entropy(z, dz),
-    pzabovezmean = pzabovemean
+    max  = max(z),
+    mean = mean(z),
+    sd   = stats::sd(z),
+    cv   = coefvar(z),
+    kurt = kurtosis (z),
+    skewness = skewness(z)
   )
+  names(metrics) <- paste0(distpre,gsub("[%]","",names(metrics)))
   
-  metrics = c(metrics, pzabovex, zq, d)
+  metrics = c(metrics, zq, d)
   
   return(metrics)
 }
