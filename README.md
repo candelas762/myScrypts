@@ -1,2 +1,2 @@
 # myScrypts
-just a bunch of scrypts  made
+just a bunch of scrypts I made
